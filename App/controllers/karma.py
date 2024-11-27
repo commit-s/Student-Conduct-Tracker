@@ -4,7 +4,9 @@ from .review import (get_total_review_points)
 from .accomplishment import (get_total_accomplishment_points)
 from .incidentReport import (get_total_incident_points)
 from .transcript import (calculate_academic_score)
-
+from .KarmaModifierInvoker import KarmaModifierInvoker
+from .AddKarma import AddKarma
+from .MinusKarma import MinusKarma
 
 def get_karma(studentID):
   karma = Karma.query.filter_by(studentID=studentID).first()
@@ -142,3 +144,16 @@ def calculate_ranks():
   else:
     print("Karma score not found")
     return False
+
+def staff_student_karma(student: Student, type, karma):
+    student_id = student.ID
+    karma_mod = KarmaModifierInvoker()
+
+    if type == "+":
+        command = AddKarma(student_id, karma_change=karma)
+        karma_mod.setCommand(command)
+    elif type == "-":
+        command = MinusKarma(student_id, karma_change=karma)
+        karma_mod.setCommand(command)
+
+    karma_mod.executeCommand()
