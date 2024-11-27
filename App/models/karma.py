@@ -115,3 +115,9 @@ class Karma(db.Model):
         "rank": self.rank,
         "studentID": self.studentID
     }
+
+def update_karma(self, change_type,karma_diff) -> None:
+      if change_type == "+":
+          self.points += karma_diff
+      elif change_type == "-":
+          self.points -= karma_diff
