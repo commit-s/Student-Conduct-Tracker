@@ -2,10 +2,8 @@ from App.models import Student
 from App.database import db
 
 
-def create_student(username, UniId, firstname, lastname, email, password,
-                   faculty, admittedTerm, degree, gpa):
-  newStudent = Student(username, UniId, firstname, lastname, email, password,
-                       faculty, admittedTerm, degree, gpa)
+def create_student(UniId, firstname, lastname, email, faculty, admittedTerm, degree, gpa):
+  newStudent = Student(UniId, firstname, lastname, email, faculty, admittedTerm, degree, gpa)
   db.session.add(newStudent)
   try:
     db.session.commit()
@@ -62,6 +60,8 @@ def create_student_from_transcript(transcript_data, student_data):
     db.session.rollback()
     return False
 
+def get_all_students():
+  return Student.query.all()
 
 def get_student_by_id(id):
   student = Student.query.filter_by(ID=id).first()

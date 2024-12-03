@@ -1,16 +1,17 @@
 from App.models import Review
+from App.observer.events import Event
 from App.database import db
 
 
 def create_review(staff, student, isPositive, points, details):
-  newReview = Review(staff=staff,
-                     student=student,
-                     isPositive=isPositive,
-                     points=points,
-                     details=details,
-                     studentSeen=False)
+  from App.observer.initialize import subject # decoupled to avoid circular import error
+
+  newReview = Review(staff=staff, student=student, isPositive=isPositive, points=points, details=details, studentSeen=False)
   db.session.add(newReview)
+
   try:
+    event = Event(name="new_review", student_id=student.ID) # Send event to observer
+    subject.notify(event)
     db.session.commit()
     return True
   except Exception as e:
@@ -63,15 +64,6 @@ def calculate_points_downvote(review):
     db.session.rollback()
     return False
 
-
-# def get_total_review_points(studentID):
-#   reviews = Review.query.filter_by(studentID=studentID).all()
-#   if reviews:
-#     sum = 0
-#     for review in reviews:
-#       sum += review.points
-#     return sum
-#   return 0
 def get_total_review_points(studentID):
   reviews = Review.query.filter_by(studentID=studentID).all()
   if reviews:

@@ -499,10 +499,7 @@
         <img src="https://github.com/RichardR963/Info3604_Project/blob/main/images/Points.png?raw=true" alt="Points Icon" class="mini-icon"> Review Points: {{ karma.reviewsPoints}} 
     </div>
       <div class="block text-gray-700 font-semibold">
-          <img src="https://github.com/RichardR963/Info3604_Project/blob/main/images/Points.png?raw=true" alt="Points Icon" class="mini-icon"> Achievement Points: {{ karma.accomplishmentPoints}}
-      </div>
-      <div class="block text-gray-700 font-semibold">
-          <img src="https://github.com/RichardR963/Info3604_Project/blob/main/images/Points.png?raw=true" alt="Points Icon" class="mini-icon"> Total Points: {{ karma.points}}
+          <img src="https://github.com/RichardR963/Info3604_Project/blob/main/images/Points.png?raw=true" alt="Points Icon" class="mini-icon"> Karma: {{ karma.points}}
       </div>
     <!-- <div class="block text-gray-700 font-semibold">
         <img src="yearofstudy.png" alt="Year Icon" class="mini-icon"> Year of Study: No
@@ -511,40 +508,11 @@
         <img src="https://github.com/RichardR963/Info3604_Project/blob/main/images/admittedterm.png?raw=true" alt="Admitted Term Icons" class="mini-icon"> <a>Admitted Term: {{ student.admittedTerm }}</a>
     </div> -->
 </nav>
-
-<div class="badges-container">
-    <div class="badges-card">
-        <div class="badgestitle">Badges</div>
-        <div class="badge-section">
-          {% for badge in student.badges[-3:] %}
-            <div class="badge-image-container">
-              <img src={{badge.imageLink}} alt="Badge placeholder" class="badge-image">
-            </div>
-            {% endfor %}
-        </div>
-        <div class="center">
-            <a href="/view-all-badges-staff/{{student.ID}}" class="view-all-badges">
-                <img src="https://github.com/RichardR963/Info3604_Project/blob/main/images/down.png?raw=true" alt="Down Arrow" class="arrow-icon">
-                <p class="content"><strong>View All Badges</strong></p>
-            </a>
-        </div>
-    </div>
-</div>
   
   <div class="rcontainer">
 
-<div class="reviews-container2">
-    <div class="reviews-card">
-    <h1>Achievements</h1>
-      <a href="/view-all-student-achievements/{{student.UniId}}" class="view-all-reviews">
-          <img src="https://github.com/RichardR963/Info3604_Project/blob/main/images/down.png?raw=true" alt="Down Arrow" class="arrow-icon">
-          <p class="content"><strong>View All Achievements</strong></p>
-      </a>
-    </div>
-</div>
 
     <div class="reviews-container">
-
         <div class="reviews-card">
         <h1>Reviews</h1>
           <a href="/view-all-student-reviews/{{student.UniId}}" class="view-all-reviews">

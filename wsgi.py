@@ -5,144 +5,20 @@ from flask.cli import with_appcontext, AppGroup
 
 from App.database import db, get_migrate
 from App.main import create_app
-from App.models import Student, Karma
 from App.controllers import (
-    create_student, create_staff, create_admin, get_all_users_json,
-    get_all_users, get_transcript, get_student_by_UniId, setup_nltk,
+    initialize, get_transcript, get_student_by_UniId,
     analyze_sentiment, get_total_As, get_total_courses_attempted,
-    calculate_academic_score, create_review, create_incident_report,
-    create_accomplishment, get_staff_by_id, get_student_by_id,
-    create_job_recommendation, create_karma, get_karma)
+    calculate_academic_score)
 
 # This commands file allow you to create convenient CLI commands for testing controllers
-
 app = create_app()
 migrate = get_migrate(app)
 
-
 # This command creates and initializes the database
 @app.cli.command("init", help="Creates and initializes the database")
-def initialize():
-  db.drop_all()
-  db.create_all()
-
-  create_student(username="billy",
-                 firstname="Billy",
-                 lastname="John",
-                 email="billy@example.com",
-                 password="billypass",
-                 faculty="FST",
-                 admittedTerm="",
-                 UniId='816031160',
-                 degree="",
-                 gpa="")
-
-  create_student(username="shivum",
-                 firstname="Shivum",
-                 lastname="Praboocharan",
-                 email="shivum.praboocharan@my.uwi.edu",
-                 password="shivumpass",
-                 faculty="FST",
-                 admittedTerm="2019/2021",
-                 UniId='816016480',
-                 degree="Bachelor of Computer Science with Management",
-                 gpa='')
-
-  create_student(username="jovani",
-                 firstname="Jovani",
-                 lastname="Highley",
-                 email="jovani.highley@my.uwi.edu",
-                 password="jovanipass",
-                 faculty="FST",
-                 admittedTerm="2021/2022",
-                 UniId='816026834',
-                 degree="Bachelor of Computer Science with Management",
-                 gpa='')
-
-  create_student(username="kasim",
-                 firstname="Kasim",
-                 lastname="Taylor",
-                 email="kasim.taylor@my.uwi.edu",
-                 password="kasimpass",
-                 faculty="FST",
-                 admittedTerm="2019/2021",
-                 UniId='816030847',
-                 degree="Bachelor of Computer Science (General",
-                 gpa='')
-
-  create_student(username="brian",
-                 firstname="Brian",
-                 lastname="Cheruiyot",
-                 email="brian.cheruiyot@my.uwi.edu",
-                 password="brianpass",
-                 faculty="FST",
-                 admittedTerm="2021/2022",
-                 UniId='816031609',
-                 degree="Bachelor of Computer Science (General)",
-                 gpa="")
-
-  #Creating staff
-  create_staff(username="tim",
-               firstname="Tim",
-               lastname="Long",
-               email="",
-               password="timpass",
-               faculty="")
-
-  create_staff(username="vijay",
-               firstname="Vijayanandh",
-               lastname="Rajamanickam",
-               email="Vijayanandh.Rajamanickam@sta.uwi.edu",
-               password="vijaypass",
-               faculty="FST")
-
-  create_staff(username="permanand",
-               firstname="Permanand",
-               lastname="Mohan",
-               email="Permanand.Mohan@sta.uwi.edu",
-               password="password",
-               faculty="FST")
-
-  create_job_recommendation(
-      2, 7, False, "Job", "1",
-      "I am seeking a recommnedation for a position at a company", "WebTech",
-      "Web Developer", "webtech@gmail.com")
-  create_job_recommendation(
-      2, 8, False, "Job", "1",
-      "I am seeking a recommnedation for a position at a company", "WebTech",
-      "Web Developer", "webtech@gmail.com")
-  create_accomplishment(2, False, "Permanand Mohan", "Runtime",
-                        "I placed first at runtime.", 0, "None Yet")
-  create_accomplishment(2, False, "Vijayanandh Rajamanickam", "Runtime",
-                        "I placed first at runtime.", 0, "None Yet")
-
-  staff = get_staff_by_id(7)
-  student1 = get_student_by_UniId(816031609)
-  create_review(staff, student1, True, 5, "Behaves very well in class!")
-
-  student2 = get_student_by_UniId(816016480)
-  create_review(staff, student2, True, 5, "Behaves very well in class!")
-  student3 = get_student_by_UniId(816026834)
-  create_review(staff, student3, True, 5, "Behaves very well in class!")
-  student4 = get_student_by_UniId(816030847)
-  create_review(staff, student4, True, 5, "Behaves very well in class!")
-  create_admin(username="admin",
-               firstname="Admin",
-               lastname="Admin",
-               email="admin@example.com",
-               password="password",
-               faculty="FST")
-
-  students = Student.query.all()
-
-  for student in students:
-    
-    if student:
-      print(student.ID)
-      create_karma(student.ID)
-      student.karmaID = get_karma(student.ID).karmaID
-      print(get_karma(student.ID).karmaID)
-      db.session.commit()
+def init():
+  initialize()
+  print("Database initialized")
 
 
 @app.cli.command("nltk_test", help="Tests nltk")

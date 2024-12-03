@@ -58,8 +58,12 @@ def get_student_name():
   student_id = request.json['studentID']
 
   student = get_student_by_UniId(student_id)
+  fullname = None
+  if student:
+    fullname = student.firstname + ' ' + student.lastname
 
-  return jsonify({'studentName': student.fullname})
+
+  return jsonify({'studentName': fullname})
 
 
 @staff_views.route('/studentSearch', methods=['GET'])
@@ -156,7 +160,7 @@ def studentSearch():
     name_parts = name.split()
     if len(name_parts) > 1:
       # If it contains both first name and last name, filter by full name
-      query = query.filter_by(fullname=name)
+      query = query.filter_by(firstname=name_parts[0],lastname=name_parts[1])
     else:
       # If it contains only one name, filter by either first name or last name
       query = query.filter(
@@ -327,19 +331,6 @@ def getStudentProfile(uniID):
 
   user = User.query.filter_by(ID=student.ID).first()
   karma = get_karma(student.ID)
-
-  if karma:
-
-    calculate_academic_points(student.ID)
-    calculate_accomplishment_points(student.ID)
-    calculate_review_points(student.ID)
-    #Points: academic (0.4),accomplishment (0,3 shared)
-    #missing points: incident , reivew
-    #calculate the accomplishment - incident for 0.3 shared
-    #assign review based on 1 time reivew max 5pts for 0.3
-    update_total_points(karma.karmaID)
-    #updaing ranks
-    calculate_ranks()
 
   transcripts = get_transcript(student.UniId)
   numAs = get_total_As(student.UniId)

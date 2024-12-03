@@ -108,76 +108,37 @@ def student_dashboard_page():
 @student_views.route('/student-page', methods=['GET'])
 @login_required
 def student_page():
-  #getting student info from controller
-  #using flasklogin to get the current user
-  student = Student.query.filter_by(ID=current_user.ID).first()
-  user = User.query.filter_by(ID=current_user.ID).first()
-  karma = get_karma(student.ID)
-  if karma:
-    #print("karma id is: ", karma.karmaID)
-    calculate_academic_points(student.ID)
-    calculate_accomplishment_points(student.ID)
-    calculate_review_points(student.ID)
-    calculate_incident_points(student.ID)
-    print("academic points:" + str(karma.academicPoints))
-    print("accomplishment points:" + str(karma.accomplishmentPoints))
-    print("review points:" + str(karma.reviewsPoints))
-    print("incident points:" + str(karma.incidentPoints))
-    #Points: academic (0.4),accomplishment (0,3 shared)
-    update_total_points(student.ID)
-    print('total karma points', karma.points)
-    #updaing ranks
-    calculate_ranks()
-    #print(karma.to_json())
+    # Fetch student and user info
+    student = Student.query.filter_by(ID=current_user.ID).first()
+    user = User.query.filter_by(ID=current_user.ID).first()
+    karma = get_karma(student.ID)
 
-  transcripts = get_transcript(current_user.UniId)
-  numAs = get_total_As(current_user.UniId)
+    # Fetch other details (transcripts, notifications, etc.)
+    transcripts = get_transcript(current_user.UniId)
+    numAs = get_total_As(current_user.UniId)
 
-  sortBadges(student) 
-  #notis for incidents
-  incidentsUnseenNum = 0
-  if student:
-    for incident in student.incidents:
-      if incident.studentSeen == False:
-        incidentsUnseenNum += 1
+    # Sort badges and calculate notifications
+    sortBadges(student)
+    incidentsUnseenNum = sum(1 for incident in student.incidents if not incident.studentSeen)
+    studentAchieveSeenNum = sum(1 for achievement in student.accomplishments if not achievement.studentSeen and achievement.verified)
+    studentReviewsSeenNum = sum(1 for review in student.reviews if not review.studentSeen)
+    studentBadgesSeenNum = sum(1 for badge in student.badges if not badge.studentSeen)
+    recCount = get_recommendations_student_count(current_user.UniId)
 
-  #notis for accomplishments
-  studentAchieiveSeenNum = 0
-  if student:
-    for achievement in student.accomplishments:
-      if achievement.studentSeen == False and achievement.verified == True:
-        studentAchieiveSeenNum += 1
+    notification_values = [incidentsUnseenNum, studentAchieveSeenNum, studentReviewsSeenNum, recCount, studentBadgesSeenNum]
 
-  #notis for reviews
-  studentReviewsdSeenNum = 0
-  if student:
-    for review in student.reviews:
-      if review.studentSeen == False:
-        studentReviewsdSeenNum += 1
+    # Render the student page
+    if student:
+        return render_template('StudentPage.html',
+                               student=student,
+                               user=user,
+                               transcripts=transcripts,
+                               numAs=numAs,
+                               karma=karma,
+                               notification_values=notification_values)
+    else:
+        return render_template('Student-Home.html')
 
-  #notis for badges
-  studentBadgesSeenNum = 0
-  if student:
-    for badge in student.badges:
-      if badge.studentSeen == False:
-        studentBadgesSeenNum += 1
-
-  recCount = get_recommendations_student_count(current_user.UniId)
-
-  notification_values = [
-      incidentsUnseenNum, studentAchieiveSeenNum, studentReviewsdSeenNum,
-      recCount ,studentBadgesSeenNum
-  ] 
-  if student:
-    return render_template('StudentPage.html',
-                           student=student,
-                           user=user,
-                           transcripts=transcripts,
-                           numAs=numAs,
-                           karma=karma,
-                           notification_values=notification_values)
-  else:
-    return render_template('Student-Home.html')
 
 
 @student_views.route('/api/student-page', methods=['GET'])
