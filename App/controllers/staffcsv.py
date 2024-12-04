@@ -20,11 +20,11 @@ def populate_staff_from_csv(csv_file_path):
       for row in reader:
         firstname = row.get('First name')
         lastname = row.get('Last name')
-        username = f"{firstname}.{lastname}" if firstname and lastname else ""
-       
         email = row.get('Email address')
+        UniId = row.get('ID number')
+        faculty = row.get('Faculty')
 
-        if None in [firstname, lastname, username,email]:
+        if None in [firstname, lastname, email, UniId, faculty]:
           print("Some values in the row are None.")
           continue
 
@@ -32,25 +32,23 @@ def populate_staff_from_csv(csv_file_path):
         password = generate_random_password()
 
         new_staff = create_staff(
-            username=username,
+            UniId=UniId,
             firstname=firstname,
             lastname=lastname,
             email=email,
             password=password,  # Use the generated password
-            faculty="",
+            faculty=faculty,
         )
 
         if new_staff:
           print(f"User created: {firstname} {lastname}")
           # Prepare and send the email with the new account details
           subject = "Welcome to Our Student Conduct Tracker Platform!"
-          body = f"Dear {firstname},\n\nYour new Staff account has been created.\n\nUsername: {username}\nPassword: {password}\n\nPlease ensure you change your password upon first login."
+          body = f"Dear {firstname},\n\nYour new Staff account has been created.\n\nStaff ID: {UniId}\nPassword: {password}\n\nPlease ensure you change your password upon first login."
 
           # Send email notification
           with current_app.app_context():
-            email_message = EmailMultiAlternatives(subject=subject,
-                                                   body=body,
-                                                   to=[email])
+            email_message = EmailMultiAlternatives(subject=subject, body=body, to=[email])
             email_message.send()
         else:
           print(f"Failed to create user: {firstname} {lastname}")

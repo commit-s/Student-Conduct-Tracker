@@ -1,16 +1,16 @@
 from App.models import Student
+from App.observer.events import Event
 from App.database import db
 
-
-def create_student(username, UniId, firstname, lastname, email, password,
-                   faculty, admittedTerm, degree, gpa):
-  newStudent = Student(username, UniId, firstname, lastname, email, password,
-                       faculty, admittedTerm, degree, gpa)
+def create_student(UniId, firstname, lastname, email, faculty, admittedTerm, degree, gpa=0.0):
+  newStudent = Student(UniId, firstname, lastname, email, faculty, admittedTerm, degree, gpa)
   db.session.add(newStudent)
+
   try:
     db.session.commit()
+    from .karma import create_karma
+    create_karma(newStudent.ID)
     return True
-    # return newStudent
   except Exception as e:
     print(
         "[student.create_student] Error occurred while creating new student: ",
@@ -20,85 +20,45 @@ def create_student(username, UniId, firstname, lastname, email, password,
 
 
 def create_student_from_transcript(transcript_data, student_data):
+  from App.observer.initialize import subject
   try:
-
-    #storing UniId, gpa, fullname, faculty, degree, admittedTerm in Student object and linking it to the transcript object
     UniId = transcript_data.get('id')
     gpa = transcript_data.get('gpa')
     faculty = transcript_data.get('faculty')
     admittedTerm = transcript_data.get('admittedTerm')
-    #yearOfStudy = transcript_data.get('yearOfStudy')
-    degree = transcript_data.get('programme')
-    fullname = transcript_data.get('fullname')
-
-    #retrieve student from database and update the student object correctly
-    print("Student Data in controller ID is:", student_data.ID)
 
     #updating student
-    #checking if student already exist based on id
     student = get_student_by_id(student_data.ID)
     if not student:
-      print(
-          f"Student with ID {student.ID} already exists in database from controller!"
-      )
+      print(f"Student with ID {student.ID} already exists in database from controller!")
       return False
     else:
-      #db.session.add(new_student)
-      #updating student
-      update_from_transcript(student_data.ID, admittedTerm, UniId, gpa, degree,
-                             faculty, fullname)
-      #db.session.commit()
-      #printing data to be stored
-      print(
-          f"Added row: UniId: {UniId}, GPA: {gpa}, Faculty: {faculty}, Admitted Term: {admittedTerm}, Degree: {degree}, Fullname: {fullname}"
-      )
+      update_from_transcript(student_data.ID, admittedTerm, UniId, gpa, faculty)
+      print(f"Added row: UniId: {UniId}, GPA: {gpa}, Faculty: {faculty}, Admitted Term: {admittedTerm}")
       print("Student data stored in database from controller!")
+      event = Event(name="new_academic", student_id=student.ID) # Send event to observer
+      subject.notify(event)
       return True
-
   except Exception as e:
-    print(
-        "[transcript.create_transcript] Error occurred while creating new Student: ",
-        str(e))
+    print("[transcript.create_transcript] Error occurred while creating new Student: ", str(e))
     db.session.rollback()
     return False
 
+def get_all_students():
+  return Student.query.all()
 
 def get_student_by_id(id):
-  student = Student.query.filter_by(ID=id).first()
-  if student:
-    return student
-  else:
-    return None
+  return Student.query.get(id)
 
 
 def get_student_by_UniId(UniId):
-  student = Student.query.filter_by(UniId=UniId).first()
-  if student:
-    return student
-  else:
-    return None
-
-
-def get_student_by_username(username):
-  student = Student.query.filter_by(username=username).first()
-  if student:
-    return student
-  else:
-    return None
-
+  return Student.query.filter_by(UniId=UniId).first()
 
 def get_students_by_faculty(faculty):
-  students = Student.query.filter_by(faculty=faculty).all()
-  if students:
-    return students
-  else:
-    return []
-
+  return Student.query.filter_by(faculty=faculty).all()
 
 def get_student_for_ir(firstname, lastname, UniId):
-  student = Student.query.filter_by(firstname=firstname,
-                                    lastname=lastname,
-                                    UniId=UniId).first()
+  student = Student.query.filter_by(firstname=firstname, lastname=lastname, UniId=UniId).first()
   if student:
     return student
   else:
@@ -106,21 +66,13 @@ def get_student_for_ir(firstname, lastname, UniId):
 
 
 def get_student_by_name(firstname, lastname):
-  students = Student.query.filter_by(firstname=firstname,
-                                     lastname=lastname).all()
-  if students:
-    return students
-  else:
-    return []
-
+  return Student.query.filter_by(firstname=firstname,  lastname=lastname).all()
 
 def get_full_name_by_student_id(student_id):
   student = Student.query.filter_by(UniId=student_id).first()
   if student:
-    full_name = f"{student.firstname} {student.lastname}"
-    return full_name
-  else:
-    return None
+    return f"{student.firstname} {student.lastname}"
+  return None
 
 
 def get_students_by_degree(degree):
@@ -135,16 +87,6 @@ def get_students_by_ids(student_ids):
   students = Student.query.filter(Student.ID.in_(student_ids)).all()
   return students
 
-
-# def get_all_students_json():
-#   students = Student.query.all()
-#   if not students:
-#     return []
-#   students_json = [student.get_json() for student in students]
-#   return students_json
-
-
-#returning all information about students
 def get_all_students_json():
   students = Student.query.all()
   if not students:
@@ -158,39 +100,23 @@ def get_all_students_json():
         'firstname': student.firstname,
         'lastname': student.lastname,
         'email': student.email,
-        'faculty': student.faculty,
-        #'accomplishments': student.accomplishments,  # Include accomplishments
-        #'incidents': student.incidents,  # Include incidents
-        'degree': student.degree,  # Include degree
-        'admittedTerm': student.admittedTerm,  # Include admitted term
+        'faculty': student.faculty, 
+        'degree': student.degree,
+        'admittedTerm': student.admittedTerm,
         'gpa': student.gpa,
-        #'transcripts': student.transcripts,  # Include transcripts
-        #'karmaScore': student.karmaScore,  # Include karma score
-        #'karmaRank': student.karmaRank # Include karma rank
-        # Include other details as needed
+        'karmaScore': student.karmaScore,
+        #'incidents': student.incidents
     }
     students_json.append(student_data)
 
   return students_json
 
-
-# def student_create_post(studentUsername, teacherUsername, details):
-#     if create_post(studentUsername, teacherUsername, verified=False, details):
-#         return True
-#     else:
-#         print("[student.student_create_post] Error occurred while creating new post: create_post returned False")
-#         return False
-
-
-#UniId=UniId, gpa=gpa, firstname=fullname, admittedTerm=admittedTerm, degree=degree, faculty=faculty, username=UniId, lastname="", email="", password=""
-def update_from_transcript(ID, newAdmittedTerm, newUniId, newGpa, newDegree,
-                           newFaculty, newFullname):
+def update_from_transcript(ID, newAdmittedTerm, newUniId, newGpa, newFaculty):
   student = get_student_by_id(ID)
   if student:
     student.admittedTerm = newAdmittedTerm
     student.UniId = newUniId
     student.gpa = newGpa
-    student.degree = newDegree
     student.faculty = newFaculty
     #student.fullname = newFullname
     try:
@@ -202,64 +128,3 @@ def update_from_transcript(ID, newAdmittedTerm, newUniId, newGpa, newDegree,
           ID, "was found!", str(e))
       db.session.rollback()
       return False
-
-
-def update_admittedTerm(studentID, newAdmittedTerm):
-  student = get_student_by_id(studentID)
-  if student:
-    student.admittedTerm = newAdmittedTerm
-    try:
-      db.session.commit()
-      return True
-    except Exception as e:
-      print(
-          "[student.update_admittedTerm] Error occurred while updating student admittedTerm:",
-          str(e))
-      db.session.rollback()
-      return False
-  else:
-    print(
-        "[student.update_admittedTerm] Error occurred while updating student admittedTerm: Student "
-        + str(studentID) + " not found")
-    return False
-
-
-# this field doesn't exist in the database for now
-def update_yearofStudy(studentID, newYearofStudy):
-  student = get_student_by_id(studentID)
-  if student:
-    student.yearofStudy = newYearofStudy
-    try:
-      db.session.commit()
-      return True
-    except Exception as e:
-      print(
-          "[student.update_yearofStudy] Error occurred while updating student yearofStudy:",
-          str(e))
-      db.session.rollback()
-      return False
-  else:
-    print(
-        "[student.update_yearofStudy] Error occurred while updating student yearofStudy: Student "
-        + str(studentID) + " not found")
-    return False
-
-
-def update_degree(studentID, newDegree):
-  student = get_student_by_id(studentID)
-  if student:
-    student.degree = newDegree
-    try:
-      db.session.commit()
-      return True
-    except Exception as e:
-      print(
-          "[student.update_degree] Error occurred while updating student degree:",
-          str(e))
-      db.session.rollback()
-      return False
-  else:
-    print(
-        "[student.update_degree] Error occurred while updating student degree: Student "
-        + str(studentID) + " not found")
-    return False

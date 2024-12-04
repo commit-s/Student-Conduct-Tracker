@@ -5,12 +5,11 @@ from abc import ABC
 
 class User(db.Model, UserMixin):
     ID = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(120), nullable=False)
+    UniId = db.Column(db.String(10), nullable=False, unique=True)
     firstname = db.Column(db.String(120), nullable=False)
     lastname = db.Column(db.String(120), nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    email = db.Column(db.String(120), nullable=False)
-    faculty = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
     user_type = db.Column(db.String(20), nullable=False)
     
     __mapper_args__ = {
@@ -18,22 +17,20 @@ class User(db.Model, UserMixin):
         "polymorphic_on": user_type,
     }
 
-    def __init__(self, username, firstname,lastname , password, email, faculty):
-        self.username= username
+    def __init__(self, UniId, firstname, lastname, email, password):
+        self.UniId = UniId
         self.firstname = firstname
         self.lastname = lastname
         self.email = email
-        self.faculty = faculty
         self.set_password(password)
 
     def get_json(self):
         return{
             'id': self.ID,
-            'username': self.username,
+            'UniID': self.UniId,
             'firstname': self.firstname,
             'lastname': self.lastname,
             'email': self.email,
-            'faculty': self.faculty
         }
     
     def get_id(self):

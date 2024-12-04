@@ -12,8 +12,6 @@ def create_transcript(transcript_data):
     courses = transcript_data.get('courses', {})
     in_progress_courses = transcript_data.get('inProgressCourses', {})
 
-    #print('Transcript data:', transcript_data)
-
     # Function to split courses by semester
     def split_courses_by_semester(courses_dict):
       semesters = {}
@@ -32,26 +30,17 @@ def create_transcript(transcript_data):
       return semesters
 
     courses_by_semester = split_courses_by_semester(courses)
-    in_progress_courses_by_semester = split_courses_by_semester(
-        in_progress_courses)
+    in_progress_courses_by_semester = split_courses_by_semester(in_progress_courses)
 
     # Iterate through completed courses
     for semester, semester_courses in courses_by_semester.items():
       for course, grade in semester_courses.items():
         if grade:  # Check if grade is not empty
-          print(
-              f"Adding completed course for {semester}: {course} - Grade: {grade}"
-          )
+          print(f"Adding completed course for {semester}: {course} - Grade: {grade}")
           #check if already exists
-          transcript = Transcript.query.filter_by(UniId=UniId,
-                                                  semester=semester,
-                                                  course=course).first()
+          transcript = Transcript.query.filter_by(UniId=UniId, semester=semester, course=course).first()
           if not transcript:
-            new_transcript = Transcript(UniId=UniId,
-                                        semester=semester,
-                                        course=course,
-                                        grade=grade,
-                                        isInProgress=False)
+            new_transcript = Transcript(UniId=UniId, semester=semester, course=course, grade=grade, isInProgress=False)
             db.session.add(new_transcript)
             db.session.commit()  # Commit the changes to the database
           else:
@@ -59,46 +48,31 @@ def create_transcript(transcript_data):
               transcript.grade = grade #overwriting the grade if null from last semester
               transcript.isInProgress = False #setting it to false as it is completed
               db.session.commit()  # Commit the changes to the database
-            print(
-                f"Course {course} for {semester} already exists in database! (from controller) "
-            )
+            print(f"Course {course} for {semester} already exists in database! (from controller) ")
 
     # Iterate through in-progress courses
-    for semester, in_progress_semester_courses in in_progress_courses_by_semester.items(
-    ):
+    for semester, in_progress_semester_courses in in_progress_courses_by_semester.items():
       for in_progress_course in in_progress_semester_courses.keys():
-        print(
-            f"Adding in-progress course for {semester}: {in_progress_course}")
+        print(f"Adding in-progress course for {semester}: {in_progress_course}")
         #check if already exists
-        transcript = Transcript.query.filter_by(
-            UniId=UniId, semester=semester, course=in_progress_course).first()
+        transcript = Transcript.query.filter_by(UniId=UniId, semester=semester, course=in_progress_course).first()
         if not transcript:
-          new_transcript = Transcript(UniId=UniId,
-                                      semester=semester,
-                                      course=in_progress_course,
-                                      grade='',
-                                      isInProgress=True)
+          new_transcript = Transcript(UniId=UniId, semester=semester, course=in_progress_course, grade='', isInProgress=True)
           db.session.add(new_transcript)
         else:
-          print(
-              f"Course {in_progress_course} for {semester} already exists in database! (from controller)"
-          )
+          print(f"Course {in_progress_course} for {semester} already exists in database! (from controller)")
 
     db.session.commit()
     print("Transcript data stored succefully in database! (from controller)")
     return True
   except Exception as e:
-    print(
-        "[transcript.create_transcript] Error occurred while creating new transcript: ",
-        str(e))
+    print("[transcript.create_transcript] Error occurred while creating new transcript: ", str(e))
     db.session.rollback()
     return False
 
 
 def calculate_academic_score(studentID):
-  # student = get_student_by_UniId(studentID)
   student = get_student_by_id(studentID)
-
   # UniId = '816033730'
   if student:
     UniId = student.UniId
@@ -228,22 +202,14 @@ def delete_transcript(UniId):
       db.session.commit()
       return True
     except Exception as e:
-      print(
-          "[transcript.delete_transcript] Error occurred while deleting transcript: ",
-          str(e))
+      print("[transcript.delete_transcript] Error occurred while deleting transcript: ", str(e))
       db.session.rollback()
       return False
 
   else:
-    print(
-        "[transcript.delete_transcript] Transcript not found for student with ID: ",
-        UniId)
+    print("[transcript.delete_transcript] Transcript not found for student with ID: ", UniId)
     return False
 
 
 def get_transcript(UniId):
-  transcripts = Transcript.query.filter_by(UniId=UniId).all()
-  if transcripts:
-    return transcripts
-  else:
-    return None
+  return Transcript.query.filter_by(UniId=UniId).all()
