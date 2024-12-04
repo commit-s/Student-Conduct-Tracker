@@ -68,9 +68,13 @@ def get_staff_reviews(UniId):
   return Review.query.filter_by(createdByStaffID=UniId).all()
 
 def get_student_reviews_json(UniId):
-  reviews = Review.query.filter_by(studentID=UniId).all()
-  return [review.to_json() for review in reviews]
+  from App.controllers import get_student_by_UniId, get_staff_by_id
+  student = get_student_by_UniId(UniId)
+  reviews = Review.query.filter_by(studentID=student.ID).all()
+  return [review.to_json(student, get_staff_by_id(review.createdByStaffID)) for review in reviews]
 
 def get_staff_reviews_json(UniId):
-  reviews = Review.query.filter_by(createdByStaffID=UniId).all()
-  return [review.to_json() for review in reviews]
+  from App.controllers import get_staff_by_UniId, get_student_by_id
+  staff = get_staff_by_UniId(UniId)
+  reviews = Review.query.filter_by(createdByStaffID=staff.ID).all()
+  return [review.to_json(get_student_by_id(review.studentID),staff) for review in reviews]
