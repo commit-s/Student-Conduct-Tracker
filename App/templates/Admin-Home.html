@@ -55,14 +55,12 @@
       color: white;
     }
     .user-avatar {
-      width: 650px; /* Increase size of the avatar */
-      height: 650px; /* Increase size of the avatar */
-
-      position: absolute; /* Position it absolutely within header */
-      right: 670px; /* Align to the right */
-      bottom: -430px; /* Let it overlap into the body */
-   
-
+    position: absolute;
+      width: 40vw;
+        height: 40vw;
+        right: 32vw;
+        bottom: -28vw;
+ 
       background: url("https://github.com/RichardR963/Info3604_Project/blob/main/images/AV2.png?raw=true") center/cover no-repeat;
     }
 
@@ -138,6 +136,13 @@
     width: 100%;
     height: auto;
     margin-bottom: 8px; /* Provide space between the image and the text */
+  }
+
+  .image-link img[src*="SS.png"] {
+    width: 150%; /* Adjust the width percentage or set a fixed width */
+    height: auto; /* Maintain the aspect ratio */
+    margin-top: -20px;
+    margin-bottom: 0px; /* Provide space between the image and the text */
   }
 
   .text4 {
@@ -297,6 +302,11 @@
     <img src="https://github.com/RichardR963/Info3604_Project/blob/main/images/CSV.png?raw=true" alt="Leaderboard">
     <span class="text4"> Upload <span class="red">Staff</span> CSV </span>
   </a>
+  <a href="/studentSearch" class="image-link">
+    <img src=" https://github.com/RichardR963/Info3604_Project/blob/main/images/SS.png?raw=true" alt="Student Search">
+    <span class="text4"> Student Search </span>
+  </a>
+  
  
 
 </div>

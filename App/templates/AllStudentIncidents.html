@@ -200,12 +200,14 @@
         <div class="student-info">
             <h3>Topic:  {{ incident.topic}}</h3>
           <!-- <p> Assigned staff id: {{ incident.madeByStaffId}} </p> -->
-          <p>Points: {{ incident.pointsDeducted }}</p>
+            <p>Submitted By: 
+                {{ (incident.staffReports.firstname + ' ' + incident.staffReports.lastname) if incident.staffReports else "Unknown Staff" }}
+            </p>
+            <p>Course: {{ incident.course }}</p>
+            <p>Points: -{{ incident.pointsDeducted }}</p>
             <div class="description-box">
                 <h3>Details:  {{ incident.report}}</h3>
-
             </div>
-          
         </div>
     </div>
   {% endfor %}

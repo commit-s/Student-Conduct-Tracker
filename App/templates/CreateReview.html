@@ -200,8 +200,9 @@
         <h2>Student Review Survey</h2>
 
         <form id="review-form" action="/createReview" method="post">
-            <input type="text" id="studentID" name="studentID" placeholder="Student ID" required oninput="fetchStudentName()">
+          <input type="text" id="studentID" name="studentID" placeholder="Student ID" required oninput="fetchStudentName()">
           <input type="text" id="name" name="name" placeholder="Student Name" required>
+          <input type="text" id="course" name="course" placeholder="Course ID" required>
             <div class="reviewStuff">
             <div class="positive">
               <h3 class="heads">Positive</h3>
@@ -342,7 +343,7 @@
           .catch(error => console.error('Error:', error));
       }
     
-      document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
     const dropdownLinks = document.querySelectorAll('.dropdown-content a');
     const form = document.getElementById('review-form');
     const detailsDisplay = document.getElementById('selected-details');

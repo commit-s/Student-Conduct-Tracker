@@ -88,7 +88,7 @@
             font-size: 1.25rem; /* Use rem units for font size */
             }
 
-            .student-info-container {
+        .student-info-container {
           max-height: 400px; /* Adjust this value as needed */
           overflow-y: auto; /* Enable vertical scrolling */
           width: 100%; /* Make the header span the entire width */
@@ -254,7 +254,7 @@
         }
 
         /* Individual cards (Reviews and Incidents) */
-        .reviews-card, .incidents-card {
+        .reviews-card, .incidents-card, .transcript-card {
             background: white;
             padding: 20px;
             border: 2px solid #051d3c;
@@ -319,20 +319,12 @@
     </div>
 
     <div class="content-container">
-        <div class="reviews-card">
-            <h1>Reviews</h1>
-            <a href="/view-all-student-reviews/{{student.UniId}}" class="view-all-reviews">
+        <div class="transcript-card">
+            <h1>Transcript</h1>
+            <a href="/upload-transcript/{{student.UniId}}" class="view-all-reviews">
                 <img src="https://github.com/RichardR963/Info3604_Project/blob/main/images/down.png?raw=true" alt="Down Arrow" class="arrow-icon">
-                <p class="content"><strong>View All Reviews</strong></p>
+            <p class="content"><strong>Upload Transcript</strong></p>
             </a>
-        </div>
-
-        <div class="incidents-card">
-            <h1>Incidents</h1>
-      <a href="/view-all-student-incidents/{{student.UniId}}" class="view-all-reviews">
-          <img src="https://github.com/RichardR963/Info3604_Project/blob/main/images/down.png?raw=true" alt="Down Arrow" class="arrow-icon">
-          <p class="content"><strong>View All Incidents</strong></p>
-      </a>
         </div>
     </div>
 

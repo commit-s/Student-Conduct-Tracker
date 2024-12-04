@@ -76,7 +76,8 @@
             color: #051d3c;
         }
         .recommendation-form input,
-        .recommendation-form textarea {
+        .recommendation-form textarea,
+        .recommendation-form select  {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -161,7 +162,17 @@
         <form class = "sm" action="/searchStudent" method="get">
           <input type="text" id="studentID" name="studentID" placeholder="Student ID" oninput="fetchStudentName()">
             <input type="text" id="name" name="name" placeholder="Name">
-            <input type="text" id="faculty" name="faculty" placeholder="Faculty" >
+            <select id="faculty" name="faculty">
+                <option value="" selected>Select Faculty</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Food & Agriculture">Food & Agriculture</option>
+                <option value="Humanities & Education">Humanities & Education</option>
+                <option value="Medical Sciences">Medical Sciences</option>
+                <option value="Science & Technology">Science & Technology</option>
+                <option value="Scocal Sciences">Scocal Sciences</option>
+                <option value="Sport">Sport</option>
+                <option value="Law">Law</option>
+              </select>
             <input type="text" id="degree" name="degree" placeholder="Degree" >
         <button type="submit">Search</button>
           {% if message %}

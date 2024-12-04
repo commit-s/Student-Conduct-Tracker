@@ -193,10 +193,13 @@
         {% if review.isPositive %}
             <h3>Positive Review</h3>
         {% else %}
-        <h3>Negative Review</h3>
+            <h3>Negative Review</h3>
         {% endif %}
 
-
+        <p>Submitted By: 
+            {{ (review.staffReviews.firstname + ' ' + review.staffReviews.lastname) if review.staffReviews else "Unknown Staff" }}
+        </p>
+        <p>Course: {{ review.course }}</p>
         <p>Points: {{ review.points }}</p>
           <div class="description-box">
               <h3>Details:  {{ review.details}}</h3>

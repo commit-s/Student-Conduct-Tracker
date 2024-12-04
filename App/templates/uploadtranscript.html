@@ -221,6 +221,22 @@
           font-size: 1.4rem; /* Adjust the font size as needed */
       }
 
+      .spinner {
+          border: 4px solid #f3f3f3; /* Light grey */
+          border-top: 4px solid #3498db; /* Blue */
+          border-radius: 50%;
+          margin-top: 4px;
+          width: 24px;
+          height: 24px;
+          animation: spin 1s linear infinite;
+          margin-left: 10px; /* Adjust the spacing if necessary */
+      }
+
+      @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+      }
+
     </style>
 </head>
 <body>
@@ -230,7 +246,7 @@
         </div>
         <div class="logo2"><h2>Student Conduct Tracker</h2></div>
         <ul class="nav-bar">
-            <li><a href="/Student-Home">Home</a></li>
+            <li><a href="/admin">Home</a></li>
             <li><a href="/logout">Logout</a></li>
         </ul>
     </header>
@@ -266,8 +282,8 @@
                 <input type="file" id="pdf-upload" name="myfile" accept=".pdf">
             </label>
         </form>
-
-      <form method="GET" action="/checkPDF">
+        <div id="spinner" class="spinner" style="display:none;"></div>
+      <form method="GET" action="/checkPDF/{{student.UniId}}">
           <button id="submit-btn" class="submit" href="/checkPDF" disabled>Submit</button>
       </form>
       
@@ -275,44 +291,60 @@
   </div>
   </div>
   <script>
-      document.getElementById('pdf-upload').addEventListener('change', function(event) {
-          const file = event.target.files[0];
-          const submitBtn = document.getElementById('submit-btn');
+    document.getElementById('pdf-upload').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        const submitBtn = document.getElementById('submit-btn');
 
-          if (file) {
-              submitBtn.removeAttribute('disabled');
-          }
-      });
+        if (file) {
+            submitBtn.removeAttribute('disabled');
+        }
+    });
 
-      document.getElementById('submit-btn').addEventListener('click', function(event) {
-          event.preventDefault(); // Prevent form submission
+    document.getElementById('submit-btn').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission
 
-          const fileInput = document.getElementById('pdf-upload');
-          const file = fileInput.files[0];
-          const formData = new FormData();
-          formData.append('file', file);
+        const submitBtn = document.getElementById('submit-btn');
+        const spinner = document.getElementById('spinner');
 
-          fetch('/upload_transcript', {
-              method: 'POST',
-              body: formData
-          })
-          .then(response => {
-              if (response.ok) {
-                  return response.text(); // Assuming the response is text
-              } else {
-                  throw new Error('File upload failed');
-              }
-          })
-          .then(data => {
-              console.log('File uploaded successfully:', data);
-              // Redirect to the checkPDF endpoint
-              window.location.href = '/checkPDF';
-          })
-          .catch(error => {
-              console.error('Error uploading file:', error.message);
-              // Optionally, display an error message to the user
-          });
-      });
+        // Disable the button to prevent multiple clicks
+        submitBtn.disabled = true;
+        // Show the spinner
+        spinner.style.display = 'inline-block';
+        // Change the button text to something more generic like "Processing..."
+        submitBtn.textContent = 'Processing...';
+
+        const fileInput = document.getElementById('pdf-upload');
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/upload_transcript/{{student.UniId}}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.text(); // Assuming the response is text
+            } else {
+                throw new Error('File upload failed');
+            }
+        })
+        .then(data => {
+            console.log('File uploaded successfully:', data);
+            // Redirect to the checkPDF endpoint
+            window.location.href = '/checkPDF/{{student.UniId}}';
+        })
+        .catch(error => {
+            console.error('Error uploading file:', error.message);
+            // Optionally, display an error message to the user
+            alert('Error uploading the file. Please try again.');
+
+            // Reset the button in case of error
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit'; // Reset button text
+            spinner.style.display = 'none'; // Hide the spinner
+        });
+    });
   </script>
 
 </body>
