@@ -60,3 +60,17 @@ def get_total_review_points(studentID):
 
 def get_review(id):
   return Review.query.get(id)
+
+def get_student_reviews(UniId):
+  return Review.query.filter_by(studentID=UniId).all()
+
+def get_staff_reviews(UniId):
+  return Review.query.filter_by(createdByStaffID=UniId).all()
+
+def get_student_reviews_json(UniId):
+  reviews = Review.query.filter_by(studentID=UniId).all()
+  return [review.to_json() for review in reviews]
+
+def get_staff_reviews_json(UniId):
+  reviews = Review.query.filter_by(createdByStaffID=UniId).all()
+  return [review.to_json() for review in reviews]

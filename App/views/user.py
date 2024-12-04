@@ -28,8 +28,8 @@ def get_users_action():
 @user_views.route('/api/users', methods=['POST'])
 def create_user_endpoint():
     data = request.json
-    create_user(data['username'], data['password'])
-    return jsonify({'message': f"user {data['username']} created"})
+    create_user(UniId=data['UniId'], firstname=data['firstname'], lastname=data['lastname'], email=data['email'], password=data['password'])
+    return jsonify({'message': f"user {data['firstname']} {data['lastname']} created"})
 
 @user_views.route('/users', methods=['POST'])
 def create_user_action():

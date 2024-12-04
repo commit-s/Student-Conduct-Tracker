@@ -22,8 +22,7 @@ def get_user_page():
 @login_required
 def identify_page():
   return jsonify({
-      'message':
-      f"email: {current_user.email}, id : {current_user.ID}"
+      'message': f"email: {current_user.email}, 'id' : {current_user.ID}"
   })
 
 
@@ -34,7 +33,6 @@ def login_action():
   user = login(data['email'].lower(), data['password'])
   if user:
     user_type = type(user)
-    print("User type:", user_type)
     login_user(user)
     if (user.user_type == "staff"):
       return redirect("/StaffHome")  # Redirect to student dashboard
@@ -66,8 +64,8 @@ def get_users_action():
 @auth_views.route('/api/users', methods=['POST'])
 def create_user_endpoint():
   data = request.json
-  create_user(data['email'], data['password'])
-  return jsonify({'message': f"user {data['email']} created"})
+  create_user(UniId=data['UniId'], firstname=data['firstname'], lastname=data['lastname'], email=data['email'], password=data['password'])
+  return jsonify({'message': f"user {data['firstname']} {data['lastname']} created"})
 
 
 @auth_views.route('/api/login', methods=['POST'])
@@ -84,5 +82,5 @@ def user_login_api():
 def identify_user_action():
   return jsonify({
       'message':
-      f"email: {jwt_current_user.email}, id : {jwt_current_user.ID}"
+      f"email: {jwt_current_user.email}, 'id' : {jwt_current_user.ID}"
   })

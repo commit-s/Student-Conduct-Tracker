@@ -7,8 +7,8 @@ from datetime import datetime
 
 from App.models import Student, Staff, User, IncidentReport
 from App.controllers import (
-    jwt_authenticate, create_incident_report, get_student_by_UniId,
-    get_student_by_id, get_staff_by_id, get_students_by_faculty,
+    jwt_authenticate, create_incident_report, get_student_by_UniId, get_staff_by_UniId,
+    get_staff_by_id, get_all_students_json, get_student_reviews_json, get_staff_reviews_json,
     get_staff_by_id, get_transcript, analyze_sentiment,
     get_total_As, get_student_for_ir, create_review, get_karma,)
 
@@ -36,8 +36,12 @@ def get_staffHome_page():
 def staff_ir_page():
   return render_template('IncidentReport.html')
 
+@staff_views.route('/api/students', methods=['GET'])
+def get_all_students():
+  students = get_all_students_json()
+  return jsonify(students)
 
-@staff_views.route('/get_student_name', methods=['POST'])
+@staff_views.route('/api/student', methods=['POST'])
 def get_student_name():
   student_id = request.json['studentID']
   student = get_student_by_UniId(student_id)
@@ -45,8 +49,27 @@ def get_student_name():
   if student:
     fullname = student.firstname + ' ' + student.lastname
 
-  return jsonify({'studentName': fullname})
+  return jsonify({'Student Name': fullname})
 
+@staff_views.route('/api/studentReviews/<string:studentID>', methods=['GET'])
+def get_student_reviews(studentID):
+  student = get_student_by_UniId(studentID)
+  if not student:
+    return jsonify({'message' : "No Student Found."})
+  
+  return jsonify(get_student_reviews_json(studentID))
+
+@staff_views.route('/api/staffReviews/<string:staffID>', methods=['GET'])
+def get_staff_reviews(staffID):
+  staff = get_staff_by_UniId(staffID)
+  if not staff:
+    return jsonify({'message' : "No Staff Found."})
+  
+  return jsonify(get_staff_reviews_json(staffID))
+  
+  
+
+  
 
 @staff_views.route('/studentSearch', methods=['GET'])
 def student_search_page():
