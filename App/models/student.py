@@ -41,23 +41,15 @@ class Student(db.Model):
   # Gets the student details and returns in JSON format
   def to_json(self, karma):
     return {
-        "studentID":
-        self.ID,
-        "firstname":
-        self.firstname,
-        "lastname":
-        self.lastname,
-        "gpa":
-        self.gpa,
-        "email":
-        self.email,
-        "faculty":
-        self.faculty,
-        "degree":
-        self.degree,
-        "admittedTerm":
-        self.admittedTerm,
+        "studentID": self.ID,
         "UniId": self.UniId,
+        "firstname": self.firstname,
+        "lastname": self.lastname,
+        "gpa": self.gpa,
+        "email": self.email,
+        "faculty": self.faculty,
+        "degree": self.degree,
+        "admittedTerm": self.admittedTerm,
         "reviews": [review.to_json() for review in self.reviews],
         "incidents": [incident.to_json() for incident in self.incidents],
         "grades": [grade.to_json() for grade in self.grades],

@@ -28,7 +28,7 @@ class Staff(User):
         "email": self.email,
         "faculty":  self.faculty,
         "reviews": [review.to_json() for review in self.reviews],
-        "reports": [report.to_json() for report in self.reports],
+        "reports": [report.to_json() for report in self.reports]
     }
 
   def __repr__(self):

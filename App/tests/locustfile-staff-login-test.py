@@ -6,13 +6,13 @@ class WebsiteUser(HttpUser):
     @task(1)
     def login_and_visit_student_page(self):
         # Login request with form data
-        login_response = self.client.post("/login", data={"username": "tim", "password": "timpass"})
+        login_response = self.client.post("/login", data={"email": "permanand.mohan@sta.uwi.edu", "password": "permpass"})
         if login_response.status_code == 200:
             print("Staff Login successful")
 
-            # Visit student page
-            student_page_response = self.client.get("/StaffHome")
-            if student_page_response.status_code == 200:
+            # Visit staff page
+            staff_page_response = self.client.get("/StaffHome")
+            if staff_page_response.status_code == 200:
                 print("Visited Staff page")
             else:
                 print("Failed to visit student page")

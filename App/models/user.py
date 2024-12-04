@@ -27,7 +27,7 @@ class User(db.Model, UserMixin):
     def get_json(self):
         return{
             'id': self.ID,
-            'UniID': self.UniId,
+            'UniId': self.UniId,
             'firstname': self.firstname,
             'lastname': self.lastname,
             'email': self.email,

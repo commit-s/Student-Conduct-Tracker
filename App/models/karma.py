@@ -29,3 +29,13 @@ class Karma(db.Model):
       (self.reviewsPoints * MULTIPLIERS["reviews"]) +
       (self.incidentPoints * MULTIPLIERS["incident"]), 2
     )
+
+  def to_json(self):
+    return {
+      "karmaID": self.karmaID,
+      "score": self.points,
+      "academicPoints": self.academicPoints, 
+      "reviewPoints": self.reviewsPoints,
+      "incidentPoints": self.incidentPoints,
+      "studentID": self.studentID
+    }

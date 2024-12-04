@@ -59,4 +59,4 @@ def get_total_review_points(studentID):
 
 
 def get_review(id):
-  return Review.query.filter_by(ID=id).first()
+  return Review.query.get(id)

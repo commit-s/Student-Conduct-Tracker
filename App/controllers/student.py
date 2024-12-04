@@ -96,7 +96,7 @@ def get_all_students_json():
   for student in students:
     student_data = {
         'id': student.ID,
-        'username': student.username,
+        'UniId': student.UniId,
         'firstname': student.firstname,
         'lastname': student.lastname,
         'email': student.email,
@@ -104,8 +104,6 @@ def get_all_students_json():
         'degree': student.degree,
         'admittedTerm': student.admittedTerm,
         'gpa': student.gpa,
-        'karmaScore': student.karmaScore,
-        #'incidents': student.incidents
     }
     students_json.append(student_data)
 

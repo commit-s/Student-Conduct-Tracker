@@ -9,8 +9,8 @@ from App.controllers import (
     delete_incident_report,
     create_student,
     create_staff,
-    get_student_by_username,
-    get_staff_by_username,
+    get_student_by_UniId,
+    get_staff_by_UniId,
     get_incident_reports,
     get_incident_report
 )
@@ -22,7 +22,7 @@ from App.controllers import (
 class IncidentReportUnitTests(unittest.TestCase):
 
     def test_new_report(self):
-        newReport = IncidentReport(studentID=1, madeByStaffId=2, report="Bad report",topic="Badness", points=-3,studentSeen=False)
+        newReport = IncidentReport(studentID=1, madeByStaffId=2, course="COMP3613", report="Bad report",topic="Badness", points=-3,studentSeen=False)
         assert newReport is not None
 
 '''
@@ -41,16 +41,15 @@ def empty_db():
 class IncidentReportIntegrationTests(unittest.TestCase):
 
     def test_create_report(self):
-        assert create_student(username="billy", firstname="Billy", lastname="John", email="billy@example.com", password="billypass", faculty="FST", admittedTerm="2022/2023", UniId="816000000", degree="BSc Computer Science", gpa="3.5") == True
-        assert create_staff(username="joe",firstname="Joe", lastname="Mama", email="joe@example.com", password="joepass", faculty="FST") == True
-        student = get_student_by_username("billy")
-        staff = get_staff_by_username("joe")
+        assert create_student(UniId="816032313", firstname="Jonathan", lastname="Joseph", email="jonathan.joseph55@my.uwi.edu", faculty="Science & Technology", admittedTerm="2022/2023", degree="BSc Computer Science", gpa=3.5) == True
+        assert create_staff(UniId="81600666",firstname="John", lastname="Snow", email="john.snow@sta.uwu.edu", password="joepass", faculty="Science & Technology") == True
+        student = get_student_by_UniId("816032313")
+        staff = get_staff_by_UniId("81600666")
 
-        assert create_incident_report(student.UniId, staff.ID, "Bad Report", "Badness", points=-3) == True
+        assert create_incident_report(studentid=student.UniId, staffid=staff.ID, course="COMP1600", report="Bad Report",topic="Badness", points=-3) == True
 
     def test_delete_report(self):
-        self.test_create_report()
-        staff = get_staff_by_username("joe")
+        staff = get_staff_by_UniId("81600666")
         reports = get_incident_reports(staff.ID)
         report = reports[0]
         db.session.delete(report)

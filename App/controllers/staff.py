@@ -38,8 +38,8 @@ def staff_edit_review(id, details):
     return False
 
 
-def staff_create_review(staff, student, isPositive, points, details):
-    return create_review(staff, student, isPositive, points, details)
+def staff_create_review(staff, student, course, isPositive, points, details):
+    return create_review(staff, student, course, isPositive, points, details)
 
 
 
