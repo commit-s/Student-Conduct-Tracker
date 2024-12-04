@@ -11,16 +11,24 @@ from App.controllers.student import *
 
 transcript_views = Blueprint('transcript_views', __name__)
 
-
-@transcript_views.route('/checkPDF')
-def checkPDF():
+@transcript_views.route('/checkPDF/<string:uniID>')
+def checkPDF(uniID):
   message = session.get('message')
   return render_template('landingpage.html', message=message)
 
+@transcript_views.route('/upload-transcript/<string:uniID>', methods=['GET'])
+@login_required
+def student_profile(uniID):
+  student = Student.query.filter_by(UniId=uniID).first()
+  return render_template('uploadtranscript.html',student=student)
 
 @login_required
-@transcript_views.route('/upload_transcript', methods=['POST'])
-def upload_transcript():
+@transcript_views.route('/upload_transcript/<string:uniID>', methods=['POST'])
+def upload_transcript(uniID):
+  student = Student.query.filter_by(UniId=uniID).first()
+  if student is None:
+    return jsonify({'error': 'Invalid Student ID'})
+
   if 'file' not in request.files:
     return jsonify({'error': 'No file part'})
 
@@ -39,17 +47,15 @@ def upload_transcript():
       print('trying_to_parse_transcript')
       transcript_data = parse_transcript(file_path)
 
-      if transcript_data and transcript_data.get('id') == current_user.UniId:
+      if transcript_data and transcript_data.get('id') == student.UniId:
         success = create_transcript(transcript_data)
         if success:
           print("transcript data stored in database from view!")
-          successStudent = create_student_from_transcript(
-              transcript_data, current_user)
+          successStudent = create_student_from_transcript(transcript_data, student)
           if successStudent:
             os.remove(file_path)
             print("Student data stored in database Correctly!")
-            session[
-                'message'] = f"Transcript: '{filename}' uploaded successfully !!"
+            session['message'] = f"Transcript: '{filename}' uploaded successfully !!"
             return f"Transcript: '{filename}' uploaded successfully !!"
           else:
             os.remove(file_path)
@@ -64,8 +70,7 @@ def upload_transcript():
       else:
         os.remove(file_path)
         print("student uniid invalid or transcript parsing failed from view!")
-        print("student uniid: ", current_user.UniId, "transcript id: ",
-              transcript_data.get('id'))
+        print("student uniid: ", student.UniId, "transcript id: ", transcript_data.get('id'))
         session['message'] = f"Transcript: '{filename}' upload failed !!"
         return f"Transcript: '{filename}' upload failed !!"
     except Exception as e:
