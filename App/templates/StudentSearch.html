@@ -191,7 +191,7 @@
         const studentID = document.getElementById('studentID').value;
 
         // Send AJAX request to Flask server
-        fetch('/get_student_name', {
+        fetch('/api/student', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -201,7 +201,7 @@
         .then(response => response.json())
         .then(data => {
             // Update name input field with retrieved student name
-            document.getElementById('name').value = data.studentName;
+            document.getElementById('name').value = data['Student Name'];
         })
         .catch(error => console.error('Error:', error));
     }
