@@ -5,6 +5,14 @@
 
 ![Tests](https://github.com/uwidcit/flaskmvc/actions/workflows/dev.yml/badge.svg)
 
+# Login Information for Student-Conduct-Tracker
+Admin: admin@sta.uwi.edu
+password: password
+Staff: permanand.mohan@sta.uwi.edu
+password: permpass
+
+Password for staff generated from csv is '<firstname>pass'
+
 # Flask MVC Template
 A template for flask applications structured in the Model View Controller pattern [Demo](https://dcit-flaskmvc.herokuapp.com/). [Postman Collection](https://documenter.getpostman.com/view/583570/2s83zcTnEJ)
 
