@@ -29,7 +29,11 @@ def populate_staff_from_csv(csv_file_path):
           continue
 
         # Generate a random, secure password for each student
-        password = generate_random_password()
+        #password = generate_random_password()
+
+        #for temporary use, making the password firstnamepass
+        password = (f"{firstname.lower()}pass")
+        print(password)
 
         new_staff = create_staff(
             UniId=UniId,
@@ -47,9 +51,11 @@ def populate_staff_from_csv(csv_file_path):
           body = f"Dear {firstname},\n\nYour new Staff account has been created.\n\nStaff ID: {UniId}\nPassword: {password}\n\nPlease ensure you change your password upon first login."
 
           # Send email notification
+          '''
           with current_app.app_context():
             email_message = EmailMultiAlternatives(subject=subject, body=body, to=[email])
             email_message.send()
+          '''
         else:
           print(f"Failed to create user: {firstname} {lastname}")
   except Exception as e:
