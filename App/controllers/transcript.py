@@ -81,7 +81,6 @@ def calculate_academic_score(studentID):
     total_grades_points= get_total__grade_points(UniId)
 
     if total_courses_attempted == 0:
-      print("Error: No courses attempted for student with ID:", UniId)
       return 0
 
     aratio = total_As / total_courses_attempted

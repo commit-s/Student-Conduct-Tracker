@@ -13,7 +13,6 @@ class Student(db.Model):
   degree = db.Column(db.String(120), nullable=False)
   admittedTerm = db.Column(db.String(120), nullable=False)
   gpa = db.Column(db.Float, nullable=True, default=0.0)
-  karmaID = db.Column(db.Integer, db.ForeignKey('karma.karmaID'))
 
   reviews = db.relationship('Review', backref='studentReviews', lazy='joined')
   incidents = db.relationship('IncidentReport', backref='studentincidents', lazy='joined')

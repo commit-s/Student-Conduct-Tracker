@@ -317,7 +317,7 @@
           
             <textarea name="selected-details" id="selected-details" placeholder="Selected Reviews"></textarea>
 
-            <button type="submit">Submit</button>
+            <button id="submit-btn" type="submit">Submit</button>
         </form>
         
     </div>
@@ -350,8 +350,16 @@
     const sendPoints = document.getElementById('points');
     const sendDetails = document.getElementById('details');
     const sendNum = document.getElementById('num');
+    const submitButton = document.getElementById('submit-btn')
 
     let details = ''; // Variable to store selected items
+
+    // Add an event listener for form submission
+    form.addEventListener('submit', function (event) {
+        // Disable the submit button
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...';
+    });
 
     // Function to update dropdown selection based on textarea content
     function updateDropdownSelection() {

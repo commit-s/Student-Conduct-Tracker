@@ -165,7 +165,7 @@
                     <option value="5">5</option>
                 </select>
             </div>
-            <button type="submit">Submit</button>
+            <button id="submit-btn" type="submit">Submit</button>
         </form>
     </div>    
 
@@ -190,6 +190,15 @@
         })
         .catch(error => console.error('Error:', error));
     }
+
+    const submitButton = document.getElementById('submit-btn')
+    const form = document.getElementById('review-form');
+    // Add an event listener for form submission
+    form.addEventListener('submit', function (event) {
+        // Disable the submit button
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...';
+    });
 
   </script>
 </html>
